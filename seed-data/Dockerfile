@@ -1,4 +1,4 @@
-FROM python:slim
+FROM python:3.9-slim
 
 WORKDIR /app
 
@@ -9,7 +9,5 @@ COPY make-data.py .
 RUN python make-data.py
 
 COPY generate-votes.sh .
-
-EXPOSE 5000
 
 CMD ["bash", "generate-votes.sh"]
