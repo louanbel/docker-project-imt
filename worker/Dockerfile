@@ -1,4 +1,4 @@
-FROM --platform=${BUILDPLATFORM} mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM --platform=${BUILDPLATFORM} mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG TARGETPLATFORM
 ARG TARGETARCH
 ARG BUILDPLATFORM
@@ -14,7 +14,7 @@ COPY . .
 
 RUN dotnet publish -c release -o /app -a $TARGETARCH --self-contained false --no-restore
 
-FROM --platform=${BUILDPLATFORM} mcr.microsoft.com/dotnet/runtime:7.0 AS runtime
+FROM --platform=${TARGETPLATFORM} mcr.microsoft.com/dotnet/runtime:8.0 AS runtime
 WORKDIR /app
 
 COPY --from=build /app .
