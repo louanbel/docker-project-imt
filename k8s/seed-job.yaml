@@ -11,4 +11,4 @@ spec:
       restartPolicy: Never
       containers:
         - name: main
-          image: seed
+          image: europe-west9-docker.pkg.dev/geometric-flux-421107/voting-images/seed

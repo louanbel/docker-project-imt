@@ -3,6 +3,7 @@ services:
     build:
       context: ./worker
     image: europe-west9-docker.pkg.dev/geometric-flux-421107/voting-images/worker
+    platform: linux/amd64
     depends_on:
       - redis
       - db
@@ -12,6 +13,7 @@ services:
     build:
       context: ./vote
     image: europe-west9-docker.pkg.dev/geometric-flux-421107/voting-images/vote
+    platform: linux/amd64
     depends_on:
       - redis
     networks:
@@ -20,6 +22,7 @@ services:
   vote2:
     build:
       context: ./vote
+    platform: linux/amd64
     depends_on:
       - redis
     networks:
@@ -28,6 +31,7 @@ services:
   vote3:
     build:
       context: ./vote
+    platform: linux/amd64
     depends_on:
       - redis
     networks:
@@ -36,6 +40,7 @@ services:
   vote4:
     build:
       context: ./vote
+    platform: linux/amd64
     depends_on:
       - redis
     networks:
@@ -44,6 +49,7 @@ services:
   result:
     build:
       context: ./result
+    platform: linux/amd64
     image: europe-west9-docker.pkg.dev/geometric-flux-421107/voting-images/result
     ports:
       - 4000:4000
@@ -55,6 +61,7 @@ services:
   nginx:
     build:
       context: ./nginx
+    platform: linux/amd64
     depends_on:
       - vote1
       - vote2
@@ -66,6 +73,7 @@ services:
       - front-tier
   seed:
     image: europe-west9-docker.pkg.dev/geometric-flux-421107/voting-images/seed
+    platform: linux/amd64
     depends_on:
       - nginx
     build:
@@ -74,6 +82,7 @@ services:
       - front-tier
   redis:
     image: "redis:alpine"
+    platform: linux/amd64
     networks:
       - back-tier
     volumes:
@@ -87,6 +96,7 @@ services:
       start_interval: 5s
   db:
     image: "postgres:15-alpine"
+    platform: linux/amd64
     environment:
       POSTGRES_PASSWORD: "postgres"
     networks:
