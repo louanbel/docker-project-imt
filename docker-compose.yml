@@ -1,6 +1,7 @@
 services:
   worker:
-    build: ./worker
+    build:
+      context: ./worker
     image: europe-west9-docker.pkg.dev/geometric-flux-421107/voting-images/worker
     depends_on:
       - redis
@@ -8,7 +9,8 @@ services:
     networks:
       - back-tier
   vote1:
-    build: ./vote
+    build:
+      context: ./vote
     image: europe-west9-docker.pkg.dev/geometric-flux-421107/voting-images/vote
     depends_on:
       - redis
@@ -16,21 +18,24 @@ services:
       - back-tier
       - front-tier
   vote2:
-    build: ./vote
+    build:
+      context: ./vote
     depends_on:
       - redis
     networks:
       - back-tier
       - front-tier
   vote3:
-    build: ./vote
+    build:
+      context: ./vote
     depends_on:
       - redis
     networks:
       - back-tier
       - front-tier
   vote4:
-    build: ./vote
+    build:
+      context: ./vote
     depends_on:
       - redis
     networks:
@@ -48,7 +53,8 @@ services:
       - back-tier
       - front-tier
   nginx:
-    build: ./nginx
+    build:
+      context: ./nginx
     image: europe-west9-docker.pkg.dev/geometric-flux-421107/voting-images/nginx
     depends_on:
       - vote1
@@ -63,7 +69,8 @@ services:
     image: europe-west9-docker.pkg.dev/geometric-flux-421107/voting-images/seed
     depends_on:
       - nginx
-    build: ./seed-data
+    build:
+      context: ./seed-data
     networks:
       - front-tier
   redis:
