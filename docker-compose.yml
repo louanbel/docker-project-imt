@@ -19,6 +19,12 @@ services:
     networks:
       - back-tier
       - front-tier
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:5000/"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
   vote2:
     build:
       context: ./vote
@@ -28,6 +34,12 @@ services:
     networks:
       - back-tier
       - front-tier
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:5000/"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
   vote3:
     build:
       context: ./vote
@@ -37,6 +49,12 @@ services:
     networks:
       - back-tier
       - front-tier
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:5000/"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
   vote4:
     build:
       context: ./vote
@@ -46,6 +64,12 @@ services:
     networks:
       - back-tier
       - front-tier
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:5000/"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
   result:
     build:
       context: ./result
