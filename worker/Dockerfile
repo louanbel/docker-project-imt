@@ -3,16 +3,13 @@ ARG TARGETPLATFORM
 ARG TARGETARCH
 ARG BUILDPLATFORM
 
-RUN echo "TARGETPLATFORM=${TARGETPLATFORM}, TARGETARCH=${TARGETARCH}, BUILDPLATFORM=${BUILDPLATFORM}"
-
 WORKDIR /source
-
-COPY *.csproj ./
-RUN dotnet restore -a $TARGETARCH
 
 COPY . .
 
-RUN dotnet publish -c release -o /app -a $TARGETARCH --self-contained false --no-restore
+RUN echo "TARGETPLATFORM=${TARGETPLATFORM}, TARGETARCH=${TARGETARCH}, BUILDPLATFORM=${BUILDPLATFORM}" &&  \
+    dotnet restore -a $TARGETARCH && \
+    dotnet publish -c release -o /app -a $TARGETARCH --self-contained false --no-restore
 
 FROM --platform=${TARGETPLATFORM} mcr.microsoft.com/dotnet/runtime:8.0 AS runtime
 WORKDIR /app
