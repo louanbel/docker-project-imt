@@ -14,6 +14,8 @@ spec:
         - name: db-data
           persistentVolumeClaim:
             claimName: db-pvc
+        - name: init-db
+          emptyDir: {}
       containers:
         - image: postgres:15-alpine
           name: postgres
@@ -24,6 +26,14 @@ spec:
             - mountPath: /var/lib/postgresql/data
               subPath: data
               name: db-data
+      initContainers:
+        - name: init-db
+          image: docker-git-alpine
+          command: ["git clone", "https://gitlab.imt-atlantique.fr/login-nuage/healthchecks"]
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              subPath: data
+              name: init-db
   selector:
     matchLabels:
       app: postgres
