@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seed
+spec:
+  template:
+    metadata:
+      labels:
+        app: seed
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: main
+          image: europe-west9-docker.pkg.dev/geometric-flux-421107/voting-images/seed
