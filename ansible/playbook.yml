@@ -1,0 +1,20 @@
+- name: Install PostgreSQL for PrimaryVM and Standby VM
+  hosts: all
+  become: true
+  roles:
+    - pg_install
+  vars:
+    db_user: postgres
+    db_password: postgres
+
+- name: Configure PostgreSQL on Primary VM
+  hosts: PrimaryVM
+  become: true
+  roles:
+    - { role: pg_replication, postgresql_mode: "primary", postgresql_standby_ip: "130.211.227.208" }
+
+- name: Configure PostgreSQL on Standby VM
+  hosts: StandbyVM
+  become: true
+  roles:
+    - { role: pg_replication, postgresql_mode: "standby", postgresql_primary_ip: "35.202.23.190" }

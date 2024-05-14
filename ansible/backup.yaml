@@ -1,0 +1,19 @@
+- name: Backup
+  hosts: all
+  become: yes
+  become_user: postgres
+  tasks:
+    - name: Create a folder /tmp/backup
+      ansible.builtin.file:
+        path: /tmp/backup
+        state: directory
+    - name: Dump an existing database to a file
+      community.postgresql.postgresql_db:
+        name: postgres
+        state: dump
+        target: /tmp/backup/db.sql
+    - name: Fetch the backup
+      ansible.builtin.fetch:
+        src: /tmp/backup/db.sql
+        dest: ./
+        flat: yes

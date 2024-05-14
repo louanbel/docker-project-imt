@@ -1,0 +1,53 @@
+- name: Debug postgresql_mode before including tasks
+  debug:
+    msg: "postgresql_mode is currently set to {{ postgresql_mode }} for inventory host {{ inventory_hostname }}"
+
+- name: Create replication user
+  community.postgresql.postgresql_user:
+    db: postgres
+    name: replicator
+    password: replicator
+    role_attr_flags: "replication"
+  become: yes
+  become_user: postgres
+
+- name: Get hba_file path
+  community.postgresql.postgresql_query:
+    query: "SHOW hba_file"
+  register: hba_file
+  become: yes
+  become_user: postgres
+
+- name: Show postgresql_standby_ip
+  ansible.builtin.debug:
+    msg: "The postgresql_standby_ip is {{ postgresql_standby_ip }}"
+
+- name: Grant replication connection to replicator user
+  community.postgresql.postgresql_pg_hba:
+    dest: "{{ hba_file.query_result[0]['hba_file'] }}"
+    contype: host
+    users: replicator
+    source: 0.0.0.0/0
+    databases: replication
+    method: md5
+    address: "{{ postgresql_standby_ip }}"
+  become: yes
+  become_user: postgres
+
+- name: Configure PostgreSQL parameters
+  community.postgresql.postgresql_set:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  loop:
+    - { name: "wal_level", value: "replica" }
+    - { name: "max_wal_senders", value: "10" }
+    - { name: "wal_keep_size", value: "512MB" }
+  become: yes
+  become_user: postgres
+
+- name: Restart PostgreSQL
+  ansible.builtin.systemd:
+    name: postgresql
+    state: restarted
+  become: yes
+  become_user: root

@@ -1,0 +1,8 @@
+
+- name: Include tasks for primary mode
+  ansible.builtin.include_tasks: task_primary.yaml
+  when: postgresql_mode == "primary"
+
+- name: Include tasks for standby mode
+  ansible.builtin.include_tasks: task_standby.yaml
+  when: postgresql_mode == "standby"

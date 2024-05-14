@@ -1,0 +1,85 @@
+- name: Install postgresql-15
+  ansible.builtin.apt:
+    name: "postgresql-15"
+    state: present
+  become: yes
+  become_user: root
+- name: Install python3-psycopg2
+  ansible.builtin.apt:
+    name: "python3-psycopg2"
+    state: present
+  become: yes
+  become_user: root
+- name: Launch service
+  ansible.builtin.service:
+    name: "postgresql"
+    state: started
+  become: yes
+  become_user: root
+- name: Create postgres database
+  community.postgresql.postgresql_db:
+    name: "postgres"
+  become: yes
+  become_user: postgres
+- name: Connect to postgres database, create postgres user, and grant access to database
+  community.postgresql.postgresql_user:
+    db: postgres
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+  become: yes
+  become_user: postgres
+- name: Grant privs to postgres on database postgres
+  community.postgresql.postgresql_privs:
+    db: postgres
+    privs: all
+    type: database
+    roles: "{{ db_user }}"
+  become: yes
+  become_user: postgres
+- name: Show hba_file
+  community.postgresql.postgresql_query:
+    query: "SHOW hba_file"
+  register: hba_file
+  become: yes
+  become_user: postgres
+- name: Debug hba_file
+  ansible.builtin.debug:
+    msg: "The hba_file path is {{ hba_file.query_result[0]['hba_file'] }}"
+  become: yes
+  become_user: postgres
+- name: Grant connexion to user postgres
+  community.postgresql.postgresql_pg_hba:
+    dest: "{{ hba_file.query_result[0]['hba_file'] }}"
+    contype: host
+    users: "{{ db_user }}"
+    source: 0.0.0.0/0
+    databases: postgres
+    method: md5
+    address: all
+  become: yes
+  become_user: postgres
+  notify: restart postgresql
+- name: Set listen_addresses to '0.0.0.0'
+  community.postgresql.postgresql_set:
+    name : listen_addresses
+    value: "0.0.0.0"
+  become: yes
+  become_user: postgres
+- name: Set vm.vfs_cache_pressure kernel parameter
+  ansible.builtin.sysctl:
+    name: vm.vfs_cache_pressure
+    value: 90
+    state: present
+  become: yes
+  become_user: root
+- name: Apply sysctl changes
+  ansible.builtin.command: sysctl -p
+  become: yes
+  become_user: root
+- name: Set shared_buffers to 25% of total memory
+  community.postgresql.postgresql_set:
+    name: shared_buffers
+    value: "{{ ansible_facts['memtotal_mb'] * 0.25 }}MB"
+  become: yes
+  become_user: postgres
+  notify: restart postgresql
