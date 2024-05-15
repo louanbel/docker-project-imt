@@ -1,13 +1,13 @@
 all:
   hosts:
     PrimaryVM:
-      ansible_host: 35.202.23.190
-      ansible_user: louanbelicaud
+      ansible_host: # TODO: Mettre l'adresse IP de la VM primaire
+      ansible_user: # TODO: Mettre le nom d'utilisateur
       ansible_port: 22
-      ansible_ssh_private_key_file: "/Users/louanbelicaud/.ssh/google_compute_engine"
+      ansible_ssh_private_key_file: # TODO: Path vers la clé privée de GCE
     StandbyVM:
-      ansible_host: 130.211.227.208
-      ansible_user: louanbelicaud
+      ansible_host: # TODO: Mettre l'adresse IP de la VM standy
+      ansible_user: # TODO: Mettre le nom d'utilisateur
       ansible_port: 22
-      ansible_ssh_private_key_file: "/Users/louanbelicaud/.ssh/google_compute_engine"
+      ansible_ssh_private_key_file: # TODO: Path vers la clé privée de GCE
 
